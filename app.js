@@ -1,3 +1,5 @@
+let listaDrivers = [];
+
 document.addEventListener("DOMContentLoaded", carregar);
 
 async function carregar() {
@@ -8,58 +10,83 @@ async function carregar() {
         const agencias = await buscarAgencias();
         const rotas = await buscarRotas();
 
+        listaDrivers = drivers;
+
         console.log("Drivers:", drivers);
         console.log("Agencias:", agencias);
         console.log("Rotas:", rotas);
 
-        // MOTORISTAS
-        const selectDriver = document.getElementById("driver");
-        selectDriver.innerHTML = "";
+        preencherMotoristas(drivers);
 
-        drivers.forEach(driver => {
+        const selectAgencia =
+            document.getElementById("agencia");
 
-            const option = document.createElement("option");
+        selectAgencia.innerHTML = `
+            <option value="">
+                Selecione uma agência
+            </option>
+        `;
 
-            option.value = driver.id;
-            option.textContent = driver.nome;
+        agencias.forEach(a => {
 
-            selectDriver.appendChild(option);
-
-        });
-
-        // AGÊNCIAS
-        const selectAgencia = document.getElementById("agencia");
-        selectAgencia.innerHTML = "";
-
-        agencias.forEach(agencia => {
-
-            const option = document.createElement("option");
-
-            option.value = agencia.agencia;
-            option.textContent = agencia.agencia;
-
-            selectAgencia.appendChild(option);
+            selectAgencia.innerHTML += `
+                <option value="${a.agencia}">
+                    ${a.agencia}
+                </option>
+            `;
 
         });
 
-        // ROTAS
         renderizarRotas(rotas);
 
     } catch (erro) {
 
-        console.error("Erro ao carregar:", erro);
+        console.error(
+            "Erro ao carregar:",
+            erro
+        );
 
-        alert("Erro ao carregar dados da API.");
+        alert(
+            "Erro ao carregar dados da API."
+        );
 
     }
 
 }
 
+function preencherMotoristas(drivers) {
+
+    const lista =
+        document.getElementById("motoristas");
+
+    if (!lista) return;
+
+    lista.innerHTML = drivers
+        .map(driver =>
+            `<option value="${driver.nome}">`
+        )
+        .join("");
+
+}
+
 function renderizarRotas(rotas) {
 
-    const divRotas = document.getElementById("rotas");
+    const divRotas =
+        document.getElementById("rotas");
+
+    if (!divRotas) return;
 
     divRotas.innerHTML = "";
+
+    const titulo =
+        document.getElementById("tituloRotas");
+
+    if (titulo) {
+
+        titulo.innerHTML =
+            `📦 Rotas Disponíveis (${rotas ? rotas.length : 0})`;
+
+    }
 
     if (!rotas || rotas.length === 0) {
 
@@ -73,41 +100,37 @@ function renderizarRotas(rotas) {
 
     }
 
-    rotas.forEach((rota, index) => {
+    let html = "";
 
-        const card = document.createElement("div");
+    rotas.forEach(rota => {
 
-        card.className = "card";
+        html += `
+            <div class="card">
 
-        card.innerHTML = `
-            <h3>${rota.bairro}</h3>
+                <h3>${rota.bairro}</h3>
 
-            <p>
-                <strong>Cidade:</strong>
-                ${rota.cidade}
-            </p>
+                <p>
+                    <strong>Cidade:</strong>
+                    ${rota.cidade}
+                </p>
 
-            <p>
-                <strong>Gaiola:</strong>
-                ${rota.gaiola}
-            </p>
+                <p>
+                    <strong>Gaiola:</strong>
+                    ${rota.gaiola}
+                </p>
 
-            <button id="rota-${index}">
-                Pegar rota
-            </button>
+                <button
+                    onclick='pegarRota(${JSON.stringify(rota)})'
+                >
+                    Pegar rota
+                </button>
+
+            </div>
         `;
 
-        divRotas.appendChild(card);
-
-        const botao = document.getElementById(`rota-${index}`);
-
-        botao.addEventListener("click", () => {
-
-            pegarRota(rota);
-
-        });
-
     });
+
+    divRotas.innerHTML = html;
 
 }
 
@@ -115,25 +138,55 @@ async function pegarRota(rota) {
 
     try {
 
-        const driverSelect = document.getElementById("driver");
-        const agenciaSelect = document.getElementById("agencia");
+        const nomeDigitado =
+            document.getElementById(
+                "buscarMotorista"
+            ).value.trim();
 
-        const driverId = driverSelect.value;
+        const agencia =
+            document.getElementById(
+                "agencia"
+            ).value;
 
-        const drivers = await buscarDrivers();
+        if (!nomeDigitado) {
 
-        const driver = drivers.find(d => d.id == driverId);
+            alert(
+                "Digite o nome do motorista."
+            );
+
+            return;
+
+        }
+
+        if (!agencia) {
+
+            alert(
+                "Selecione uma agência."
+            );
+
+            return;
+
+        }
+
+        const driver =
+            listaDrivers.find(
+                d => d.nome === nomeDigitado
+            );
 
         if (!driver) {
 
-            alert("Selecione um motorista.");
+            alert(
+                "Selecione um motorista válido."
+            );
 
             return;
 
         }
 
         const confirmar = confirm(
-            `Confirmar rota?\n\n` +
+            `CONFIRMAR ROTA\n\n` +
+            `Motorista: ${driver.nome}\n` +
+            `Agência: ${agencia}\n` +
             `Bairro: ${rota.bairro}\n` +
             `Cidade: ${rota.cidade}\n` +
             `Gaiola: ${rota.gaiola}`
@@ -145,9 +198,9 @@ async function pegarRota(rota) {
 
             idDriver: driver.id,
             nome: driver.nome,
-            telefone: driver.telefone,
+            telefone: driver.telefone || "",
 
-            agencia: agenciaSelect.value,
+            agencia: agencia,
 
             cidade: rota.cidade,
             bairro: rota.bairro,
@@ -155,31 +208,57 @@ async function pegarRota(rota) {
 
         };
 
-        const resultado = await reservarRota(dados);
+        const resultado =
+            await reservarRota(dados);
 
         if (resultado.sucesso) {
 
-            alert("✅ Rota reservada com sucesso!");
+            alert(
+                "✅ Rota reservada com sucesso!"
+            );
 
-            const rotasAtualizadas = await buscarRotas();
+            document.getElementById(
+                "buscarMotorista"
+            ).value = "";
 
-            renderizarRotas(rotasAtualizadas);
+            document.getElementById(
+                "agencia"
+            ).selectedIndex = 0;
+
+            const rotasAtualizadas =
+                await buscarRotas();
+
+            renderizarRotas(
+                rotasAtualizadas
+            );
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
 
         } else {
 
-            alert("❌ " + resultado.mensagem);
+            alert(
+                "❌ " +
+                resultado.mensagem
+            );
 
         }
 
     } catch (erro) {
 
-        console.error("Erro ao reservar rota:", erro);
+        console.error(
+            "Erro ao reservar rota:",
+            erro
+        );
 
-        alert("❌ Falha na comunicação com o servidor.");
+        alert(
+            "Erro ao reservar rota."
+        );
 
     }
 
 }
 
 window.pegarRota = pegarRota;
-window.carregar = carregar;
