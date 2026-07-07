@@ -18,7 +18,8 @@ async function carregar() {
 
         preencherMotoristas(drivers);
 
-        const selectAgencia = document.getElementById("agencia");
+        const selectAgencia =
+            document.getElementById("agencia");
 
         selectAgencia.innerHTML = "";
 
@@ -34,11 +35,22 @@ async function carregar() {
 
         renderizarRotas(rotas);
 
+        console.log(
+            "Renderizando",
+            rotas.length,
+            "rotas"
+        );
+
     } catch (erro) {
 
-        console.error("Erro ao carregar:", erro);
+        console.error(
+            "Erro ao carregar:",
+            erro
+        );
 
-        alert("Erro ao carregar dados da API.");
+        alert(
+            "Erro ao carregar dados da API."
+        );
 
     }
 
@@ -46,23 +58,33 @@ async function carregar() {
 
 function preencherMotoristas(drivers) {
 
-    const lista = document.getElementById("motoristas");
+    const lista =
+        document.getElementById("motoristas");
 
-    lista.innerHTML = "";
+    if (!lista) return;
 
-    drivers.forEach(driver => {
-
-        lista.innerHTML += `
-            <option value="${driver.nome}">
-        `;
-
-    });
+    lista.innerHTML = drivers
+        .map(driver =>
+            `<option value="${driver.nome}">`
+        )
+        .join("");
 
 }
 
 function renderizarRotas(rotas) {
 
-    const divRotas = document.getElementById("rotas");
+    const divRotas =
+        document.getElementById("rotas");
+
+    if (!divRotas) {
+
+        console.error(
+            "DIV rotas não encontrada"
+        );
+
+        return;
+
+    }
 
     divRotas.innerHTML = "";
 
@@ -78,18 +100,28 @@ function renderizarRotas(rotas) {
 
     }
 
+    let html = "";
+
     rotas.forEach(r => {
 
-        divRotas.innerHTML += `
+        html += `
             <div class="card">
 
                 <h3>${r.bairro}</h3>
 
-                <p><strong>Cidade:</strong> ${r.cidade}</p>
+                <p>
+                    <strong>Cidade:</strong>
+                    ${r.cidade}
+                </p>
 
-                <p><strong>Gaiola:</strong> ${r.gaiola}</p>
+                <p>
+                    <strong>Gaiola:</strong>
+                    ${r.gaiola}
+                </p>
 
-                <button onclick='pegarRota(${JSON.stringify(r)})'>
+                <button
+                    onclick='pegarRota(${JSON.stringify(r)})'
+                >
                     Pegar rota
                 </button>
 
@@ -98,6 +130,8 @@ function renderizarRotas(rotas) {
 
     });
 
+    divRotas.innerHTML = html;
+
 }
 
 async function pegarRota(rota) {
@@ -105,18 +139,25 @@ async function pegarRota(rota) {
     try {
 
         const nomeDigitado =
-            document.getElementById("buscarMotorista").value;
+            document.getElementById(
+                "buscarMotorista"
+            ).value;
 
         const agencia =
-            document.getElementById("agencia").value;
+            document.getElementById(
+                "agencia"
+            ).value;
 
-        const driver = listaDrivers.find(d =>
-            d.nome === nomeDigitado
-        );
+        const driver =
+            listaDrivers.find(
+                d => d.nome === nomeDigitado
+            );
 
         if (!driver) {
 
-            alert("Selecione um motorista válido.");
+            alert(
+                "Selecione um motorista válido."
+            );
 
             return;
 
@@ -146,20 +187,28 @@ async function pegarRota(rota) {
 
         };
 
-        const resultado = await reservarRota(dados);
+        const resultado =
+            await reservarRota(dados);
 
         if (resultado.sucesso) {
 
-            alert("✅ Rota reservada com sucesso!");
+            alert(
+                "✅ Rota reservada com sucesso!"
+            );
 
             const rotasAtualizadas =
                 await buscarRotas();
 
-            renderizarRotas(rotasAtualizadas);
+            renderizarRotas(
+                rotasAtualizadas
+            );
 
         } else {
 
-            alert("❌ " + resultado.mensagem);
+            alert(
+                "❌ " +
+                resultado.mensagem
+            );
 
         }
 
@@ -167,7 +216,9 @@ async function pegarRota(rota) {
 
         console.error(erro);
 
-        alert("Erro ao reservar rota.");
+        alert(
+            "Erro ao reservar rota."
+        );
 
     }
 
