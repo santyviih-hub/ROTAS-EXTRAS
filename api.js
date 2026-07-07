@@ -3,7 +3,7 @@ async function buscarDrivers() {
     try {
 
         const resposta = await fetch(
-            API_URL + "?acao=drivers"
+            API_URL + "?acao=drivers&t=" + Date.now()
         );
 
         return await resposta.json();
@@ -23,7 +23,7 @@ async function buscarAgencias() {
     try {
 
         const resposta = await fetch(
-            API_URL + "?acao=agencias"
+            API_URL + "?acao=agencias&t=" + Date.now()
         );
 
         return await resposta.json();
@@ -43,7 +43,7 @@ async function buscarRotas() {
     try {
 
         const resposta = await fetch(
-            API_URL + "?acao=rotas"
+            API_URL + "?acao=rotas&t=" + Date.now()
         );
 
         return await resposta.json();
