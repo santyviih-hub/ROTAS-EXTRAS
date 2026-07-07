@@ -21,6 +21,13 @@ async function carregar() {
         const selectAgencia =
             document.getElementById("agencia");
 
+        if (!selectAgencia) {
+
+            console.error("Elemento agencia não encontrado");
+            return;
+
+        }
+
         selectAgencia.innerHTML = `
             <option value="">
                 Selecione uma agência
