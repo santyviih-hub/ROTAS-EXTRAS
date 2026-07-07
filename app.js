@@ -1,3 +1,5 @@
+let listaDrivers = [];
+
 document.addEventListener("DOMContentLoaded", carregar);
 
 async function carregar() {
@@ -8,41 +10,28 @@ async function carregar() {
         const agencias = await buscarAgencias();
         const rotas = await buscarRotas();
 
+        listaDrivers = drivers;
+
         console.log("Drivers:", drivers);
         console.log("Agencias:", agencias);
         console.log("Rotas:", rotas);
 
-        // MOTORISTAS
-        const selectDriver = document.getElementById("driver");
-        selectDriver.innerHTML = "";
+        preencherMotoristas(drivers);
 
-        drivers.forEach(driver => {
-
-            const option = document.createElement("option");
-
-            option.value = driver.id;
-            option.textContent = driver.nome;
-
-            selectDriver.appendChild(option);
-
-        });
-
-        // AGÊNCIAS
         const selectAgencia = document.getElementById("agencia");
+
         selectAgencia.innerHTML = "";
 
-        agencias.forEach(agencia => {
+        agencias.forEach(a => {
 
-            const option = document.createElement("option");
-
-            option.value = agencia.agencia;
-            option.textContent = agencia.agencia;
-
-            selectAgencia.appendChild(option);
+            selectAgencia.innerHTML += `
+                <option value="${a.agencia}">
+                    ${a.agencia}
+                </option>
+            `;
 
         });
 
-        // ROTAS
         renderizarRotas(rotas);
 
     } catch (erro) {
@@ -52,6 +41,22 @@ async function carregar() {
         alert("Erro ao carregar dados da API.");
 
     }
+
+}
+
+function preencherMotoristas(drivers) {
+
+    const lista = document.getElementById("motoristas");
+
+    lista.innerHTML = "";
+
+    drivers.forEach(driver => {
+
+        lista.innerHTML += `
+            <option value="${driver.nome}">
+        `;
+
+    });
 
 }
 
@@ -73,39 +78,23 @@ function renderizarRotas(rotas) {
 
     }
 
-    rotas.forEach((rota, index) => {
+    rotas.forEach(r => {
 
-        const card = document.createElement("div");
+        divRotas.innerHTML += `
+            <div class="card">
 
-        card.className = "card";
+                <h3>${r.bairro}</h3>
 
-        card.innerHTML = `
-            <h3>${rota.bairro}</h3>
+                <p><strong>Cidade:</strong> ${r.cidade}</p>
 
-            <p>
-                <strong>Cidade:</strong>
-                ${rota.cidade}
-            </p>
+                <p><strong>Gaiola:</strong> ${r.gaiola}</p>
 
-            <p>
-                <strong>Gaiola:</strong>
-                ${rota.gaiola}
-            </p>
+                <button onclick='pegarRota(${JSON.stringify(r)})'>
+                    Pegar rota
+                </button>
 
-            <button id="rota-${index}">
-                Pegar rota
-            </button>
+            </div>
         `;
-
-        divRotas.appendChild(card);
-
-        const botao = document.getElementById(`rota-${index}`);
-
-        botao.addEventListener("click", () => {
-
-            pegarRota(rota);
-
-        });
 
     });
 
@@ -115,18 +104,19 @@ async function pegarRota(rota) {
 
     try {
 
-        const driverSelect = document.getElementById("driver");
-        const agenciaSelect = document.getElementById("agencia");
+        const nomeDigitado =
+            document.getElementById("buscarMotorista").value;
 
-        const driverId = driverSelect.value;
+        const agencia =
+            document.getElementById("agencia").value;
 
-        const drivers = await buscarDrivers();
-
-        const driver = drivers.find(d => d.id == driverId);
+        const driver = listaDrivers.find(d =>
+            d.nome === nomeDigitado
+        );
 
         if (!driver) {
 
-            alert("Selecione um motorista.");
+            alert("Selecione um motorista válido.");
 
             return;
 
@@ -134,6 +124,7 @@ async function pegarRota(rota) {
 
         const confirmar = confirm(
             `Confirmar rota?\n\n` +
+            `Motorista: ${driver.nome}\n` +
             `Bairro: ${rota.bairro}\n` +
             `Cidade: ${rota.cidade}\n` +
             `Gaiola: ${rota.gaiola}`
@@ -147,7 +138,7 @@ async function pegarRota(rota) {
             nome: driver.nome,
             telefone: driver.telefone,
 
-            agencia: agenciaSelect.value,
+            agencia: agencia,
 
             cidade: rota.cidade,
             bairro: rota.bairro,
@@ -161,7 +152,8 @@ async function pegarRota(rota) {
 
             alert("✅ Rota reservada com sucesso!");
 
-            const rotasAtualizadas = await buscarRotas();
+            const rotasAtualizadas =
+                await buscarRotas();
 
             renderizarRotas(rotasAtualizadas);
 
@@ -173,13 +165,12 @@ async function pegarRota(rota) {
 
     } catch (erro) {
 
-        console.error("Erro ao reservar rota:", erro);
+        console.error(erro);
 
-        alert("❌ Falha na comunicação com o servidor.");
+        alert("Erro ao reservar rota.");
 
     }
 
 }
 
 window.pegarRota = pegarRota;
-window.carregar = carregar;
