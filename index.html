@@ -46,11 +46,17 @@
 
             <div class="campo">
 
-                <label for="agencia">
+                <label>
                     🏢 Agência
                 </label>
 
-                <select id="agencia"></select>
+                <select id="agencia">
+
+                    <option value="">
+                        Carregando...
+                    </option>
+
+                </select>
 
             </div>
 
@@ -58,12 +64,19 @@
 
         <section class="rotas-section">
 
-            <h2>📦 Rotas Disponíveis</h2>
+            <h2 id="tituloRotas">
+                📦 Rotas Disponíveis
+            </h2>
 
-            <div id="rotas" class="grid-rotas">
+            <div
+                id="rotas"
+                class="grid-rotas"
+            >
 
                 <div class="card">
+
                     Carregando rotas...
+
                 </div>
 
             </div>
