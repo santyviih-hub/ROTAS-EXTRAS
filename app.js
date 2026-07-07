@@ -141,12 +141,22 @@ async function pegarRota(rota) {
         const nomeDigitado =
             document.getElementById(
                 "buscarMotorista"
-            ).value;
+            ).value.trim();
 
         const agencia =
             document.getElementById(
                 "agencia"
             ).value;
+
+        if (!nomeDigitado) {
+
+            alert(
+                "Digite o nome do motorista."
+            );
+
+            return;
+
+        }
 
         const driver =
             listaDrivers.find(
@@ -164,8 +174,9 @@ async function pegarRota(rota) {
         }
 
         const confirmar = confirm(
-            `Confirmar rota?\n\n` +
+            `CONFIRMAR ROTA\n\n` +
             `Motorista: ${driver.nome}\n` +
+            `Agência: ${agencia}\n` +
             `Bairro: ${rota.bairro}\n` +
             `Cidade: ${rota.cidade}\n` +
             `Gaiola: ${rota.gaiola}`
@@ -196,12 +207,29 @@ async function pegarRota(rota) {
                 "✅ Rota reservada com sucesso!"
             );
 
+            // Limpa motorista
+            document.getElementById(
+                "buscarMotorista"
+            ).value = "";
+
+            // Volta primeira agência
+            document.getElementById(
+                "agencia"
+            ).selectedIndex = 0;
+
+            // Atualiza rotas
             const rotasAtualizadas =
                 await buscarRotas();
 
             renderizarRotas(
                 rotasAtualizadas
             );
+
+            // Volta para o topo
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
 
         } else {
 
