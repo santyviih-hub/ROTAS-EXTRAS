@@ -1,29 +1,65 @@
+document.addEventListener("DOMContentLoaded", carregar);
+
+async function carregar() {
+
+    try {
+
+        const drivers = await buscarDrivers();
+        const agencias = await buscarAgencias();
+        const rotas = await buscarRotas();
+
+        console.log("Drivers:", drivers);
+        console.log("Agencias:", agencias);
+        console.log("Rotas:", rotas);
+
+        // MOTORISTAS
+        const selectDriver = document.getElementById("driver");
+        selectDriver.innerHTML = "";
+
+        drivers.forEach(driver => {
+
+            const option = document.createElement("option");
+
+            option.value = driver.id;
+            option.textContent = driver.nome;
+
+            selectDriver.appendChild(option);
+
+        });
+
+        // AGÊNCIAS
+        const selectAgencia = document.getElementById("agencia");
+        selectAgencia.innerHTML = "";
+
+        agencias.forEach(agencia => {
+
+            const option = document.createElement("option");
+
+            option.value = agencia.agencia;
+            option.textContent = agencia.agencia;
+
+            selectAgencia.appendChild(option);
+
+        });
+
+        // ROTAS
+        renderizarRotas(rotas);
+
+    } catch (erro) {
+
+        console.error("Erro ao carregar:", erro);
+
+        alert("Erro ao carregar dados da API.");
+
+    }
+
+}
+
 function renderizarRotas(rotas) {
 
-    const divRotas =
-        document.getElementById("rotas");
-
-    if (!divRotas) {
-
-        console.error(
-            "DIV rotas não encontrada"
-        );
-
-        return;
-
-    }
+    const divRotas = document.getElementById("rotas");
 
     divRotas.innerHTML = "";
-
-    const titulo =
-        document.getElementById("tituloRotas");
-
-    if (titulo) {
-
-        titulo.innerHTML =
-            `📦 Rotas Disponíveis (${rotas ? rotas.length : 0})`;
-
-    }
 
     if (!rotas || rotas.length === 0) {
 
@@ -37,36 +73,113 @@ function renderizarRotas(rotas) {
 
     }
 
-    let html = "";
+    rotas.forEach((rota, index) => {
 
-    rotas.forEach(r => {
+        const card = document.createElement("div");
 
-        html += `
-            <div class="card">
+        card.className = "card";
 
-                <h3>${r.bairro}</h3>
+        card.innerHTML = `
+            <h3>${rota.bairro}</h3>
 
-                <p>
-                    <strong>Cidade:</strong>
-                    ${r.cidade}
-                </p>
+            <p>
+                <strong>Cidade:</strong>
+                ${rota.cidade}
+            </p>
 
-                <p>
-                    <strong>Gaiola:</strong>
-                    ${r.gaiola}
-                </p>
+            <p>
+                <strong>Gaiola:</strong>
+                ${rota.gaiola}
+            </p>
 
-                <button
-                    onclick='pegarRota(${JSON.stringify(r)})'
-                >
-                    Pegar rota
-                </button>
-
-            </div>
+            <button id="rota-${index}">
+                Pegar rota
+            </button>
         `;
+
+        divRotas.appendChild(card);
+
+        const botao = document.getElementById(`rota-${index}`);
+
+        botao.addEventListener("click", () => {
+
+            pegarRota(rota);
+
+        });
 
     });
 
-    divRotas.innerHTML = html;
+}
+
+async function pegarRota(rota) {
+
+    try {
+
+        const driverSelect = document.getElementById("driver");
+        const agenciaSelect = document.getElementById("agencia");
+
+        const driverId = driverSelect.value;
+
+        const drivers = await buscarDrivers();
+
+        const driver = drivers.find(d => d.id == driverId);
+
+        if (!driver) {
+
+            alert("Selecione um motorista.");
+
+            return;
+
+        }
+
+        const confirmar = confirm(
+            `Confirmar rota?\n\n` +
+            `Bairro: ${rota.bairro}\n` +
+            `Cidade: ${rota.cidade}\n` +
+            `Gaiola: ${rota.gaiola}`
+        );
+
+        if (!confirmar) return;
+
+        const dados = {
+
+            idDriver: driver.id,
+            nome: driver.nome,
+            telefone: driver.telefone,
+
+            agencia: agenciaSelect.value,
+
+            cidade: rota.cidade,
+            bairro: rota.bairro,
+            gaiola: rota.gaiola
+
+        };
+
+        const resultado = await reservarRota(dados);
+
+        if (resultado.sucesso) {
+
+            alert("✅ Rota reservada com sucesso!");
+
+            const rotasAtualizadas = await buscarRotas();
+
+            renderizarRotas(rotasAtualizadas);
+
+        } else {
+
+            alert("❌ " + resultado.mensagem);
+
+        }
+
+    } catch (erro) {
+
+        console.error("Erro ao reservar rota:", erro);
+
+        alert("❌ Falha na comunicação com o servidor.");
+
+    }
 
 }
+
+window.pegarRota = pegarRota;
+window.carregar = carregar;
