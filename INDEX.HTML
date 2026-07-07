@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Shopee Driver</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <header>
+
+        <h1>🚚 ROTAS EXTRAS</h1>
+
+        <p>Sistema de Reserva de Rotas</p>
+
+    </header>
+
+    <main>
+
+        <section class="formulario">
+
+            <div class="campo">
+
+                <label for="driver">
+                    👨‍✈️ Motorista
+                </label>
+
+                <select id="driver"></select>
+
+            </div>
+
+            <div class="campo">
+
+                <label for="agencia">
+                    🏢 Agência
+                </label>
+
+                <select id="agencia"></select>
+
+            </div>
+
+        </section>
+
+        <section class="rotas-section">
+
+            <h2>📦 Rotas Disponíveis</h2>
+
+            <div id="rotas" class="grid-rotas">
+
+                <div class="card">
+                    Carregando rotas...
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+
+        <p>
+            S.SERRA © 2026
+        </p>
+
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+
+</body>
+
+</html>
