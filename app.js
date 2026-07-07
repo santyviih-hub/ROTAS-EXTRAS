@@ -87,6 +87,15 @@ function renderizarRotas(rotas) {
     }
 
     divRotas.innerHTML = "";
+    const titulo =
+    document.getElementById("tituloRotas");
+
+if (titulo) {
+
+    titulo.innerHTML =
+        `📦 Rotas Disponíveis (${rotas ? rotas.length : 0})`;
+
+}
 
     if (!rotas || rotas.length === 0) {
 
