@@ -2,7 +2,7 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial, sans-serif;
+    font-family:Arial,sans-serif;
 }
 
 body{
@@ -24,6 +24,7 @@ header{
 
 header h1{
     margin-bottom:5px;
+    font-size:28px;
 }
 
 header p{
@@ -35,7 +36,7 @@ header p{
 
 main{
     flex:1;
-    max-width:1000px;
+    max-width:1100px;
     width:100%;
     margin:auto;
     padding:20px;
@@ -66,6 +67,9 @@ label{
     color:#333;
 }
 
+/* INPUT E SELECT */
+
+input,
 select{
     width:100%;
     padding:12px;
@@ -73,6 +77,12 @@ select{
     border-radius:8px;
     font-size:15px;
     background:white;
+}
+
+input:focus,
+select:focus{
+    outline:none;
+    border-color:#ee4d2d;
 }
 
 /* ROTAS */
@@ -91,7 +101,7 @@ select{
 
 .grid-rotas{
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
     gap:15px;
 }
 
@@ -107,7 +117,7 @@ select{
 }
 
 .card:hover{
-    transform:translateY(-2px);
+    transform:translateY(-3px);
 }
 
 .card h3{
@@ -132,11 +142,16 @@ button{
     border-radius:8px;
     cursor:pointer;
     font-weight:bold;
+    font-size:15px;
     transition:.2s;
 }
 
 button:hover{
     opacity:.9;
+}
+
+button:active{
+    transform:scale(.98);
 }
 
 /* FOOTER */
@@ -156,16 +171,17 @@ footer{
         padding:15px;
     }
 
+    header h1{
+        font-size:24px;
+    }
+
     .grid-rotas{
         grid-template-columns:1fr;
     }
 
-}
-input{
-    width:100%;
-    padding:12px;
-    border:1px solid #ddd;
-    border-radius:8px;
-    font-size:15px;
-    background:white;
+    button{
+        padding:14px;
+        font-size:16px;
+    }
+
 }
