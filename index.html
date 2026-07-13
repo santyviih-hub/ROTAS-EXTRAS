@@ -64,14 +64,23 @@
 
         <section class="rotas-section">
 
-            <h2 id="tituloRotas">
-                📦 Rotas Disponíveis
-            </h2>
+          <h2 id="tituloRotas">
+    📦 Rotas Disponíveis
+</h2>
 
-            <div
-                id="rotas"
-                class="grid-rotas"
-            >
+<div class="campo-pesquisa">
+    <input
+        type="text"
+        id="pesquisaBairro"
+        placeholder="🔍 Pesquisar bairro..."
+        onkeyup="filtrarBairros()"
+    >
+</div>
+
+<div
+    id="rotas"
+    class="grid-rotas"
+>
 
                 <div class="card">
 
