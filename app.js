@@ -262,3 +262,28 @@ async function pegarRota(rota) {
 }
 
 window.pegarRota = pegarRota;
+function filtrarBairros() {
+
+    const texto =
+        document.getElementById("pesquisaBairro")
+        .value
+        .toLowerCase();
+
+    const cards =
+        document.querySelectorAll("#rotas .card");
+
+    cards.forEach(card => {
+
+        const bairro =
+            card.querySelector("h3")
+            ?.textContent
+            .toLowerCase() || "";
+
+        card.style.display =
+            bairro.includes(texto)
+                ? ""
+                : "none";
+
+    });
+
+}
