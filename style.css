@@ -185,3 +185,15 @@ footer{
     }
 
 }
+.campo-pesquisa{
+    margin:15px 0 20px 0;
+}
+
+.campo-pesquisa input{
+    width:100%;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:12px;
+    font-size:16px;
+    box-sizing:border-box;
+}
